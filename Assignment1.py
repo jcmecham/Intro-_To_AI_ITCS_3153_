@@ -2,57 +2,33 @@ import numpy as np
 from random import random
 from math import floor
 
-tempBoard = [
-[0,0,0,0,0,0,1,0],
-[0,0,1,0,0,0,0,0],
-[1,0,0,0,0,0,0,0],
-[0,0,0,0,0,1,0,0],
-[0,0,0,0,0,0,0,0],
-[0,0,0,0,1,0,0,0],
-[0,1,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,1]
-]
+# tempBoard = [
+# [0,0,0,0,0,0,1,0,0,0],
+# [0,0,1,0,0,0,0,0,0,0],
+# [1,0,0,0,0,0,0,0,0,0],
+# [0,0,0,0,0,1,0,0,0,0],
+# [0,0,0,0,0,0,0,0,1,0],
+# [0,0,0,0,1,0,0,0,0,0],
+# [0,0,0,0,0,0,0,0,0,1],
+# [0,0,0,0,0,0,0,1,0,0],
+# [0,0,0,1,0,0,0,0,0,0],
+# [0,1,0,0,0,0,0,0,0,0]
+# ]
 
-tempBoard = [
-[0,0,0,0,0,0,1,0,0,0],
-[0,0,1,0,0,0,0,0,0,0],
-[1,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,1,0,0,0,0],
-[0,0,0,0,0,0,0,0,1,0],
-[0,0,0,0,1,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,1],
-[0,0,0,0,0,0,0,1,0,0],
-[0,0,0,1,0,0,0,0,0,0],
-[0,1,0,0,0,0,0,0,0,0]
-]
 boardSize = 10
+heuristicBoard = [[np.zeros([boardSize, boardSize], dtype = int)]]
 
 def main():
   # initialize matrix
-  # board = np.zeros([boardSize, boardSize], dtype = int)
+  board = np.zeros([boardSize, boardSize], dtype = int)
 
-  # # randomly place a queen in each coloumn
-  # for x in range(boardSize):
-  #   board[int(floor(random()*boardSize))][x] = 1
+  # randomly place a queen in each coloumn
+  for x in range(boardSize):
+    board[int(floor(random()*boardSize))][x] = 1
 
-  # while checkGoalState(board) :
-  #   printBoard(board)
-  board = [
-  [0,0,0,0,0,0,1,0,0,0],
-  [0,0,1,0,0,0,0,0,0,0],
-  [1,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,1,0,0,0,0],
-  [0,0,0,0,0,0,0,0,1,0],
-  [0,0,0,0,1,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,1],
-  [0,0,0,0,0,0,0,1,0,0],
-  [0,0,0,1,0,0,0,0,0,0],
-  [0,1,0,0,0,0,0,0,0,0]
-  ]
+  assessBoard(board)
   printBoard(board)
-  print(checkGoalState(board))
-
-  printBoard(tempBoard)
+  printBoard(heuristicBoard)
 
 
 
@@ -67,25 +43,14 @@ def printBoard(board):
       else:
         print(board[y][x])
 
+
 def checkGoalState(board):
-  # loop through every space on board
+  # loop through every space on board to find queens
   for y in range(boardSize):
     for x in range(boardSize):
-      if board[y][x] == 1:
-        # tempBoard = [
-        # [0,0,0,0,0,0,1,0,0,0],
-        # [0,0,1,0,0,0,0,0,0,0],
-        # [1,0,0,0,0,0,0,0,0,0],
-        # [0,0,0,0,0,1,0,0,0,0],
-        # [0,0,0,0,0,0,0,0,1,0],
-        # [0,0,0,0,1,0,0,0,0,0],
-        # [0,0,0,0,0,0,0,0,0,1],
-        # [0,0,0,0,0,0,0,1,0,0],
-        # [0,0,0,1,0,0,0,0,0,0],
-        # [0,1,0,0,0,0,0,0,0,0]]
-        #loop through board, if queen is in spot
+      if board[y][x] == 1:#loop through board to check for queen collitions, if current position is a queen
 
-        #loop through column of queen
+        #loop through column of currernt queen
         for i in range(boardSize):
           if x != i:
             if board[y][i] == 1:
@@ -93,14 +58,14 @@ def checkGoalState(board):
               return False
 
 
-        #loop through row of queen
+        #loop through row of current queen
         for i in range(boardSize):
           if y != i: 
             if board[i][x] == 1:
               print(f"Row, Queen at x:{x} y:{y}")
               return False
 
-        #check left diagonal \ for queen collision
+        #check left diagonal \ for current queen collision
         tempX = x
         tempY = y
         if tempX > tempY:           #------#
@@ -123,8 +88,7 @@ def checkGoalState(board):
             break
 
 
-        #check right diagonal / for queen collision
-        print('Check right diagonal')
+        #check right diagonal / for current queen collision
         tempX = x
         tempY = y                             #------#
         if tempX + tempY <= boardSize :       #     /#
@@ -135,18 +99,13 @@ def checkGoalState(board):
             tempX = boardSize - 1             #/     #
         while True :                          #------#
           if tempX < 0 or tempX > boardSize - 1 or tempY < 0  or tempY > boardSize - 1 :
-            print('break')
+
             break
           if board[tempY][tempX] == 1: 
             if tempY != y and tempX != x:
               #hit
-              print(f"Right diagonal , Queen at x:{x} y:{y}")
-              print(f"with tempX:{tempX} tempY:{tempY}")
-
+              print(f"Right diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY} ")
               return False
-          else:
-            print(f"Placing X (y:{tempY},x:{tempX})")
-            tempBoard[tempY][tempX] = "X"
 
           tempX -=1
           tempY +=1
