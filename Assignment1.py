@@ -16,17 +16,20 @@ from math import floor
 # ]
 
 boardSize = 10
-heuristicBoard = [[np.zeros([boardSize, boardSize], dtype = int)]]
 
 def main():
+
   # initialize matrix
   board = np.zeros([boardSize, boardSize], dtype = int)
+  heuristicBoard = np.zeros([boardSize, boardSize], dtype = float)
 
   # randomly place a queen in each coloumn
   for x in range(boardSize):
     board[int(floor(random()*boardSize))][x] = 1
 
-  assessBoard(board)
+
+ 
+  heuristicBoard = assessBoard(board,heuristicBoard)
   printBoard(board)
   printBoard(heuristicBoard)
 
@@ -115,7 +118,7 @@ def checkGoalState(board):
   return True
 
 
-def assessBoard(board):
+def assessBoard(board,heuristicBoard):
   # loop through every space on board to find queens
   for y in range(boardSize):
     for x in range(boardSize):
@@ -124,16 +127,16 @@ def assessBoard(board):
       for i in range(boardSize):
         if board[y][i] == 1:
           collisionCount+=0.1
-          print(f"Column, Queen at x:{x} y:{y}")
-          return False
+          # print(f"Column, Queen at x:{x} y:{y} collided with Queen at x:{i} y:{y}")
+          
 
 
       #loop through row of current queen
       for i in range(boardSize):
         if board[i][x] == 1:
           collisionCount+=0.1
-          print(f"Row, Queen at x:{x} y:{y}")
-          return False
+          # print(f"Row, Queen at x:{x} y:{y} collided with Queen at x:{x} y:{i}")
+          
 
       #check left diagonal \ for current queen collision
       tempX = x
@@ -148,9 +151,9 @@ def assessBoard(board):
       while True:
         if board[tempY][tempX] == 1:
           collisionCount+=0.1
-          print(f"Left diagonal , Queen at x:{x} y:{y}")
-          print(f"with tempX:{tempX} tempY:{tempY}")
-          return False
+          # print(f"Left diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY}")
+
+          
         tempX +=1
         tempY +=1
         if tempX < 0 or tempX > boardSize - 1 or tempY < 0  or tempY > boardSize - 1 :
@@ -168,17 +171,18 @@ def assessBoard(board):
           tempX = boardSize - 1             #/     #
       while True :                          #------#
         if tempX < 0 or tempX > boardSize - 1 or tempY < 0  or tempY > boardSize - 1 :
-
           break
         if board[tempY][tempX] == 1: 
           collisionCount+=0.1
-          print(f"Right diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY} ")
-          return False
+          # print(f"Right diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY}")
 
         tempX -=1
         tempY +=1
-        heuristicBoard[y][x] = collisionCount
-    
+      # print(f'-- Collision Count {round(collisionCount,2)}')
+      
+      heuristicBoard[y][x] = round(collisionCount,3)
+      
+  return heuristicBoard
 
 
 
