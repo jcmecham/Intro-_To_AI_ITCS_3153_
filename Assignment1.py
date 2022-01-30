@@ -19,9 +19,11 @@ def main():
   for x in range(boardSize):
     board[int(random()*boardSize)][x] = 1
 
-  numLowerNeighborStates = 0
-  StateChanges = 0
-  restarts = 0
+  numLowerNeighborStates = 0 #counts the number of positions on the board with lower heuristic than the current boards heuristic
+  StateChanges = 0 # number of times a queen needs to be moved
+  restarts = 0 # number of times the algorithim gets stuck at a local minimum and needs to restart
+
+
   while not checkGoalState(board):
 
     if numLowerNeighborStates == 0:
@@ -77,13 +79,14 @@ def main():
           restart = False #signals reset doesn't need to happen 
 
     StateChanges += 1
-    if restart:
+    if restart: # if no position has been moved to have a lower hueristic, reset board
       restarts +=1
       print("RESTART\n")
-    else:
+    else: #if a position has been found to have a lower hueristic, move queen
       print(f'Neighbors found with lower h: {numLowerNeighborStates}')
       print('Setting new current state\n')
       
+      # move queen to row with lowest heuristic
       for y in range(boardSize):
         board[y][lowestPos[1]] = 0
         if [y,lowestPos[1]] == lowestPos:
@@ -99,12 +102,10 @@ def main():
 
 
 
-
-
-
-
 def printBoard(board):
-  
+  """
+  Allows for easy print formatting of the boards
+  """
   for y in range(boardSize):
     for x in range(boardSize):
       if x!= boardSize - 1 :
@@ -114,6 +115,12 @@ def printBoard(board):
 
 
 def checkGoalState(board):
+  """
+  Returns True or False 
+
+  returns True if no queens collide and returns False otherwise
+  """
+
   # loop through every space on board to find queens
   for y in range(boardSize):
     for x in range(boardSize):
@@ -123,7 +130,7 @@ def checkGoalState(board):
         for i in range(boardSize):
           if x != i:
             if board[y][i] == 1:
-              # print(f"Column, Queen at x:{x} y:{y}")
+              # print(f"Column, Queen at x:{x} y:{y} collided with Queen at x:{i} y:{y}")
               return False
 
 
@@ -131,7 +138,7 @@ def checkGoalState(board):
         for i in range(boardSize):
           if y != i: 
             if board[i][x] == 1:
-              # print(f"Row, Queen at x:{x} y:{y}")
+               # print(f"Row, Queen at x:{x} y:{y} collided with Queen at x:{x} y:{i}")
               return False
 
         #check left diagonal \ for current queen collision
@@ -148,9 +155,7 @@ def checkGoalState(board):
         while True:
           if board[tempY][tempX] == 1:
             if tempY != y and tempX != x:
-              #hit
-              # print(f"Left diagonal , Queen at x:{x} y:{y}")
-              # print(f"with tempX:{tempX} tempY:{tempY}")
+              # print(f"Left diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY}")
               return False
           tempX +=1
           tempY +=1
@@ -177,7 +182,7 @@ def checkGoalState(board):
           if board[tempY][tempX] == 1: 
             if tempY != y and tempX != x:
               #hit
-              # print(f"Right diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY} ")
+              # print(f"Right diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY}")
               return False
 
           tempX -=1
@@ -189,6 +194,11 @@ def checkGoalState(board):
 
 
 def generateHeuristic(board):
+  """
+  Recieves a board of queens , one queen in each row
+  
+  This method returns an integer or heuristic that counts the number of queen collitions on a given board
+  """
   # loop through every space on board to find queens
   collisionCount = 0
   for x in range(boardSize):
@@ -248,9 +258,6 @@ def generateHeuristic(board):
           if board[tempY][tempX] == 1: 
             collisionCount+=1
             # print(f"Right diagonal , Queen at x:{x} y:{y} collided with Queen at x:{tempX} y:{tempY}")
-
-        # print(f'-- Collision Count {round(collisionCount,2)}')
-        # heuristicBoard[y][x] = collisionCount
       
   return collisionCount
 
