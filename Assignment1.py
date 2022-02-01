@@ -126,7 +126,7 @@ def checkGoalState(board):
     for x in range(boardSize):
       if board[y][x] == 1:#loop through board to check for queen collitions, if current position is a queen
 
-        #loop through column of currernt queen
+        #loop through column of current queen
         for i in range(boardSize):
           if x != i:
             if board[y][i] == 1:
