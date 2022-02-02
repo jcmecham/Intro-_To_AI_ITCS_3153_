@@ -158,10 +158,62 @@ public class Assignment1{
     return true;
   }
 
+  public static int generateHeuristic(ArrayList<ArrayList<Integer>> board){
+    int collisionCount = 0;
+    for(int x = 0; x < boardSize ; x++){
+      for(int y = 0; y < boardSize; y++){
+        if(board.get(y).get(x) == 1){
+
+          for(int i = x+1;i< boardSize;i++){
+            if(board.get(y).get(i) == 1){
+              collisionCount += 1;
+            }
+          }
+
+          for(int i = y+1;i< boardSize;i++){
+            if(board.get(i).get(x) == 1){
+              collisionCount += 1;
+            }
+          }
+
+          int tempX = x;
+          int tempY = y;
+          while(true){
+            tempX +=1;
+            tempY +=1;
+            if(tempX > boardSize - 1 || tempY > boardSize - 1 ){
+              break;
+            }
+            if(board.get(tempY).get(tempX) == 1){
+              collisionCount += 1;
+            }
+          }
+
+          tempX = x;
+          tempY = y;
+
+          while(true){
+            tempX += 1;
+            tempY -= 1;
+
+            if(tempY < 0 || tempX > boardSize - 1 ){
+              break;
+            }
+            if(board.get(tempY).get(tempX) == 1){
+              collisionCount += 1;
+            }
+          }
+
+
+
+
       }
     }
   }
 
+    return collisionCount;
+    
+  }
 
 }
 
