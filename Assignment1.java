@@ -50,9 +50,113 @@ public class Assignment1{
     }
   }
 
-  public static void checkGoalState(ArrayList<ArrayList<Integer>> board){
+  public static Boolean checkGoalState(ArrayList<ArrayList<Integer>> board){
+
+    /*
+     *   Returns True or False
+     *  Loops through board and checks if any queens collide with each other
+     *  returns True if no queens collide and returns False otherwise
+     *
+     */
     for(int y = 0; y < boardSize; y++){
       for(int x = 0; x < boardSize; x++){
+        if(board.get(y).get(x) == 1){
+
+          //loop through column of queen
+          for(int i = 0;i < boardSize;i++){
+            if(x != i ){
+              if(board.get(y).get(i) == 1){
+                // System.out.println("row hit: Queen at x:"+x+" y:"+y+" hit Queen at x:"+i+" y:"+y);
+                return false;
+
+              }
+              
+            }
+          }
+
+          //loop through row of queen
+          for(int i = 0;i < boardSize;i++){
+            if(y != i && board.get(i).get(x) == 1){
+              // System.out.println("column hit: Queen at x:"+x+" y:"+y+" hit Queen at x:"+i+" y:"+y);
+              return false;
+            }
+          }
+          //loop through Left diagonal of queen
+          // #------#
+          // # \    #
+          // #  \   #
+          // #   \  #
+          // #    \ #
+          // #     \#
+          // #------#
+          int tempX = x;
+          int tempY = y;
+          //get highest point of diagonal
+          if(tempX > tempY){
+            tempX -= tempY;
+            tempY = 0;
+          }
+          else{
+            tempY -= tempX;
+            tempX = 0;
+          }
+          while(true){
+            if(board.get(tempY).get(tempX) == 1){
+              if(tempY != y && tempX != x){
+                // System.out.println("left diagonal hit: Queen at x:"+x+" y:"+y+" hit Queen at x:"+tempX+" y:"+tempY);
+                return false;
+                }
+              }
+            tempX += 1;
+            tempY += 1;
+            if(tempX < 0 || tempX > boardSize - 1 || tempY < 0  || tempY > boardSize - 1){
+              break;
+            }
+          }
+
+          //loop through Right diagonal of queen
+          // #------#
+          // #     /#
+          // #    / #
+          // #   /  #
+          // #  /   #
+          // # /    #
+          // #/     #
+          // #------#
+
+          tempX = x;
+          tempY = y;
+          //get the highest point of right diagonal
+          if(tempX + tempY <= boardSize){
+            tempX += tempY;
+            tempY = 0;
+          }else{
+            tempY -= boardSize - 1 - tempX;
+            tempX = boardSize - 1;
+          }
+          while(true){
+            
+            if(tempX < 0 || tempX > boardSize - 1 || tempY < 0  || tempY > boardSize - 1 ){
+              break;
+            }
+            if(board.get(tempY).get(tempX) == 1){
+              if(tempY != y && tempX != x){
+                
+                // System.out.println("right diagonal hit: Queen at x:"+x+" y:"+y+" hit Queen at x:"+tempX+" y:"+tempY);
+
+                return false;
+              }
+            }
+            tempX -= 1;
+            tempY += 1;
+          }
+
+
+        }
+      }
+    }
+    return true;
+  }
 
       }
     }
