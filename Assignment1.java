@@ -1,40 +1,190 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Assignment1{
-  public static int boardSize = 10;
+  public static int boardSize = 8;
 
+  public static ArrayList<ArrayList<Integer>> tempBoard;
+  
   
   public static void printBoard(){};
   public static void checkGoalState(){};
+  public static void generateHeuristic(){};
   public static void main(String[] args){
-    ArrayList<ArrayList<Integer>> board = new ArrayList<ArrayList<Integer>>(); //create 2d arrays
+    // //-------------------------
+    // // for testing checkGoalState()
+    // int[][] tempSolved = { 
+    //                   {0,0,0,0,1,0,0,0},
+    //                   {0,1,0,0,0,0,0,0},
+    //                   {0,0,0,1,0,0,0,0},
+    //                   {0,0,0,0,0,0,1,0},
+    //                   {0,0,1,0,0,0,0,0},
+    //                   {0,0,0,0,0,0,0,1},
+    //                   {0,0,0,0,0,1,0,0},
+    //                   {1,0,0,0,0,0,0,0}};
+    
+    // for(int y = 0; y < boardSize; y++){
+    //   tempBoard.add(new ArrayList<Integer>());
+    //   for(int x = 0; x <boardSize; x++){
+    //     tempBoard.get(y).add((Integer)(tempSolved[y][x]));
+    //   }
+    // }
+    // -------------------------------
+
+
+    // declare 2d arraylists
+    ArrayList<ArrayList<Integer>> board = new ArrayList<ArrayList<Integer>>(); 
     ArrayList<ArrayList<Integer>> heuristicBoard = new ArrayList<ArrayList<Integer>>();
+    ArrayList<ArrayList<Integer>> tempBoard = new ArrayList<ArrayList<Integer>>();
+    
 
-
-    //initializes 2d arraylist for board 
+    //initializes all 2d arraylists with 0 zeros 
     for(int a = 0; a < boardSize; a++){
-      board.add(new ArrayList<Integer>(2));
+      board.add(new ArrayList<Integer>());
+      heuristicBoard.add(new ArrayList<Integer>());
+      tempBoard.add(new ArrayList<Integer>());
       for(int b = 0;b < boardSize; b++){
         board.get(a).add(0);
-      }
-    }
-    //initializes 2d arraylist for heuristicBoard
-    for(int a = 0; a < boardSize; a++){
-      heuristicBoard.add(new ArrayList<Integer>(2));
-      for(int b = 0;b < boardSize; b++){
         heuristicBoard.get(a).add(0);
+        tempBoard.get(a).add(0);
       }
     }
+
     //randomly add queens to a column
     for(int a = 0; a < boardSize; a++){
       board.get((int)(Math.random()*boardSize)).add(a,1);
     }
 
-    System.out.println("board");
+
+    int numLowerNeighborStates = 0;
+    int stateChanges = 0;
+    int restarts = 0;
+    int currentH = 0;
+    int lowestH;
+    int lowestPos[] = new int[2];
+    boolean restart;
+    while(!checkGoalState(board)){
+
+      if(numLowerNeighborStates == 0){
+
+        board = new ArrayList<ArrayList<Integer>>(); 
+        heuristicBoard = new ArrayList<ArrayList<Integer>>();
+
+        //initializes all 2d arraylists with 0 zeros
+        for(int a = 0; a < boardSize; a++){
+          board.add(new ArrayList<Integer>());
+          heuristicBoard.add(new ArrayList<Integer>());
+        tempBoard.add(new ArrayList<Integer>());
+          for(int b = 0;b < boardSize; b++){
+            board.get(a).add(0);
+            heuristicBoard.get(a).add(0);
+            tempBoard.get(a).add(0);
+          }
+        }
+
+        //randomly add queens to a column
+        for(int a = 0; a < boardSize; a++){
+          board.get((int)(Math.random()*boardSize)).add(a,1);
+        }
+
+        currentH = generateHeuristic(board);
+
+      }else{
+        numLowerNeighborStates = 0;
+      }
+
+      lowestH = currentH;
+      System.out.println("Current h: "+currentH);
+      System.out.println("Current State");
+      printBoard(board);
+      // loop through columns checking heuristics
+      for(int x = 0; x < boardSize; x++){
+        int queenIndex = 0;
+        // find y index of queen
+        for(int y = 0; y < boardSize; y++){
+          if(board.get(y).get(x) == 1){
+            queenIndex = y;
+          }
+        }
+        //create a copy of the board
+        for(int b = 0 ; b < boardSize;b++){
+          for(int c = 0 ; c < boardSize;c++){
+            int e = board.get(b).get(c);
+            tempBoard.get(b).set(c,e);
+          }
+        }
+        //removes queen from previous position on copied board
+        tempBoard.get(queenIndex).set(x, 0); 
+        
+        for(int y = 0; y < boardSize ;y++){
+          tempBoard.get(y).set(x, 1); 
+
+          // The heuristic is the number of queen collisions based one the given state of the board
+          int tempH = generateHeuristic(tempBoard);
+          
+          heuristicBoard.get(y).set(x,tempH);// based on the positions of the queens in tempBoard, a heuristic value is returned
+          tempBoard.get(y).set(x,0);//remove queen from previous position
+
+        }
+
+
+
+      }
+
+      restart = true;
+      //holds the x and y values of first position on the board with the lowestH value , if 
+
+      //check for lowest hueristic present on the board
+      for(int x =0;x<boardSize;x++){
+        for(int y = 0; y< boardSize;y++){
+          if(heuristicBoard.get(y).get(x) < currentH){
+            //count how many positions have a lower heuristic value
+            numLowerNeighborStates += 1;
+          }
+          if(heuristicBoard.get(y).get(x)<lowestH){
+            //if heuristic value in the current pos is lower than the lowest heuristic, change the lowest heuristic to the 
+            lowestH = heuristicBoard.get(y).get(x);
+            lowestPos[0] = y;
+            lowestPos[1] = x;
+            currentH = lowestH;
+            restart = false; //#signals reset doesn't need to happen 
+          }
+        }
+      }
+
+      stateChanges += 1;
+
+      if(restart){
+        //if no position has been moved to have a lower hueristic, reset board
+        restarts +=1;
+        System.out.println("RESTART");
+      }else{
+        //if a position has been found to have a lower hueristic, move queen
+        System.out.println("Neighbors found with lower h:" + numLowerNeighborStates);
+        System.out.println("Setting new current state\n");
+
+        // move queen to row with lowest heuristic
+        for(int y = 0; y < boardSize;y++){
+          board.get(y).set(lowestPos[1],0);
+          if(lowestPos[0] == y ){
+            board.get(y).set(lowestPos[1],1);
+          }
+        }
+        
+
+      }
+
+    }
+    System.out.println("Current State");
     printBoard(board);
 
-    System.out.println("heuristicBoard");
-    printBoard(heuristicBoard);
+    System.out.println("Solution Found!");
+    System.out.println("State Changes: "+ stateChanges);
+    System.out.println("Restarts: "+ restarts);
+    
+    
+
+
   }
 
   public static void printBoard(ArrayList<ArrayList<Integer>> board){
@@ -207,9 +357,9 @@ public class Assignment1{
 
 
 
+        }
       }
     }
-  }
 
     return collisionCount;
     
