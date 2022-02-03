@@ -43,6 +43,7 @@ def main():
     print(f'Current h: {currentH}')
     print('Current State')
     printBoard(board)
+    # loop through columns checking heuristics
     for x in range(boardSize):
 
       #find y index of queen
