@@ -1,5 +1,5 @@
 # Intro_To_AI_ITCS_3153 Repository
-Holds all my assignments for my Introduction to Artificial Intelligince class at UNC Charlotte
+Holds all my assignments for my Introduction to Artificial Intelligence class at UNC Charlotte
 
 
 ### Assigment1.java
