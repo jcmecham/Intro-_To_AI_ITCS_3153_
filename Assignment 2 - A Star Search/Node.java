@@ -2,13 +2,12 @@ public class Node {
 	
 	private int row, col, f, g, h, type;
 	private Node parent;
-   
+
 	public Node(int r, int c, int t){
 		row = r;
 		col = c;
 		type = t; //type 0 is traverseable, 1 is not
 		parent = null;
-
 	}
 
 	//mutator methods to set values
@@ -60,4 +59,5 @@ public class Node {
 		return "Node: " + row + "_" + col;
 	}
 	
+
 }
