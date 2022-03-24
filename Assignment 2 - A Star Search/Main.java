@@ -7,8 +7,9 @@ import java.lang.ProcessBuilder;
 
 public class Main {
   public static int BoardSize = 15;
-  public static ArrayList<Node> openList = new ArrayList<Node>();//needs to be initialized for printBoard()
-  public static ArrayList<Node> closedList = new ArrayList<Node>();//needs to be initialized for printBoard()
+  public static ArrayList<Node> openList = new ArrayList<>();//needs to be initialized for printBoard()
+  public static ArrayList<Node> closedList = new ArrayList<>();//needs to be initialized for printBoard()
+  public static ArrayList<Node> shortestPath = new ArrayList<>();
   public static Node startNode = new Node(-1,-1,0); //needs to be initialized for printBoard()
   public static Node goalNode = new Node(-1,-1,0);  //needs to be initialized for printBoard()
 
@@ -18,7 +19,7 @@ public class Main {
       gameBoard.add(new ArrayList<Node>());
       for(int c = 0; c < BoardSize; c++){
         int pathable;
-        if(Math.random() * 100 <= 10){
+        if(Math.random() * 100 <= 30){
           pathable = 1;
         }else{
           pathable = 0;
@@ -36,7 +37,7 @@ public class Main {
   public static void printBoard(ArrayList<ArrayList<Node>> gameBoard){
     try{Thread.sleep(300);}catch(InterruptedException e){};
     ClearConsole();
-    System.out.println("                      GAME BOARD");
+    System.out.println("                      A * SEARCH");
     System.out.println("                      ----------");
 
     System.out.println("     0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 \n   +---------------------------------------------+");
@@ -61,7 +62,9 @@ public class Main {
           System.out.print(ConsoleColors.BLACK +ConsoleColors.RED_BACKGROUND+" "+ pathable +" "+ ConsoleColors.RESET);
         }else{
           if(pathable == 0){
-            if(closedList.contains(tempNode)){
+            if(shortestPath.contains(tempNode)){
+              System.out.print(ConsoleColors.BLACK +ConsoleColors.GREEN_BACKGROUND+" "+ pathable +" "+ ConsoleColors.RESET);
+            }else if(closedList.contains(tempNode)){//print travled nodes
               System.out.print(ConsoleColors.BLACK +ConsoleColors.BLUE_BACKGROUND+" "+ pathable +" "+ ConsoleColors.RESET);
             }else{
             System.out.print(ConsoleColors.BLACK +ConsoleColors.WHITE_BACKGROUND+" "+ pathable +" "+ ConsoleColors.RESET);
@@ -209,11 +212,36 @@ public class Main {
 
 
       for(int i = 0; i<successors.size();i++){
+
+        //makes q the parent
+        successors.get(i).setParent(q);
         if(successors.get(i).equals(goalNode)){
           //reached goal node0,0
           closedList.add(q);
           printBoard(gameBoard);
+          
+
+          Node tempNode = successors.get(i); //position of the node that found the goal
+          while(tempNode != startNode){//loop nodes of the shortest path found
+            shortestPath.add(tempNode); //saves the shortest path from goal to start
+            printBoard(gameBoard);
+
+            // System.out.print("Temp ");
+            // System.out.println(tempNode);
+            // System.out.print("Start ");
+            // System.out.println(startNode);
+            // System.out.print("Goal ");
+            // System.out.println(goalNode);
+
+            tempNode = tempNode.getParent(); // gets the next node in the shortest path
+            // System.out.print("parent");
+            // System.out.println(tempNode);
+
+
+          }
+          printBoard(gameBoard);
           System.out.println("Solution Found!");
+          
           return;
         };
         //check successor is within bounds of the board
@@ -234,8 +262,7 @@ public class Main {
         //f=g+h
         successors.get(i).setF();
 
-        //makes q the parent
-        successors.get(i).setParent(q);
+        
 
         /**
          *  if a node with the same position as 
