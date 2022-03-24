@@ -2,7 +2,7 @@
 
 ## Demo
 
-![Demo of Project](https://github.com/jcmecham/Intro_To_AI_ITCS_3153/tree/main/Assignment%202%20-%20A%20Star%20Search/demo.gif)
+![Demo of Project](https://github.com/jcmecham/Intro_To_AI_ITCS_3153/blob/main/Assignment%202%20-%20A%20Star%20Search/demo.gif)
 
 ## Assignment Objective
 
